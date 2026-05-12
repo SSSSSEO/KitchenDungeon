@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 59bc7edfc3b31463690911eda36f52c2
+guid: bad62577264474794a8327f15e74fb55
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7733132872016974214
-    second: walk_badkimchi2_0
+      213: -3943072268602300993
+    second: walk_badkimchi1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,11 +109,24 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: walk_badkimchi2_0
+      name: walk_badkimchi1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 681d77d006b915b60800000000000000
-      internalID: 7733132872016974214
+      spriteID: fb5244ab9a46749c0800000000000000
+      internalID: -3943072268602300993
       vertices: []
       indices: 
       edges: []
@@ -148,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      walk_badkimchi2_0: 7733132872016974214
+      walk_badkimchi1_0: -3943072268602300993
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
