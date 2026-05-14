@@ -10,7 +10,7 @@ public class NetworkManager : MonoBehaviour
 
     [Header("--- 서버 설정 ---")]
     [Tooltip("서버의 기본 주소. 모든 컨트롤러는 이 주소를 참조하게 함")]
-    public string BaseUrl = "http://localhost:5000/api/v1";
+    public string BaseUrl = "http://192.168.219.113:5000/api/v1";
 
     [Header("--- 유저 세션 정보 ---")]
     public int UserId = -1;

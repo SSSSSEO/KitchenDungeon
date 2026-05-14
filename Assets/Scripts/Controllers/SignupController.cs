@@ -111,6 +111,7 @@ public class SignupController : MonoBehaviour
     {
         // [중요] NetworkManager에서 베이스 URL을 가져와서 엔드포인트와 합침
         string url = $"{NetworkManager.Instance.BaseUrl}{signupEndpoint}";
+        Debug.Log($"[Signup] 최종 전송 URL: {url}");
 
         // 1. 서버 전용 데이터 객체(DTO) 생성 및 데이터 채우기
         SignupRequest requestData = new SignupRequest
@@ -147,7 +148,10 @@ public class SignupController : MonoBehaviour
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 // 네트워크가 끊겼거나 서버 주소가 잘못된 경우
-                ShowStatusMessage("서버 연결에 실패했습니다.", Color.red);
+                // [수정] 단순 메시지 대신 실제 에러 원인을 출력!
+                string detailError = $"에러: {request.error} | 코드: {request.responseCode}";
+                ShowStatusMessage(detailError, Color.red);
+                Debug.LogError($"[Signup 상세정보] {detailError}");
             }
             else
             {
