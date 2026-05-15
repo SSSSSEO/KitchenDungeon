@@ -248,4 +248,11 @@ public class CookingBattleController : MonoBehaviour
         Debug.Log("<color=cyan>[Victory] 모든 요리 단계를 클리어했습니다! 몬스터가 정화되었습니다.</color>");
         // TODO: 승리 팝업 띄우기 및 로비 이동 로직
     }
+
+    public void AddScore(int scoreToAdd)
+    {
+        accumulatedScore += scoreToAdd;
+        scoreText.text = accumulatedScore.ToString("N0"); // 1,000 단위 콤마 찍기
+        Debug.Log($"[Battle] 점수 획득! 현재 총점: {accumulatedScore}");
+    }
 }

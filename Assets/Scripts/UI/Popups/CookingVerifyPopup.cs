@@ -154,6 +154,7 @@ public class CookingVerifyPopup : MonoBehaviour
     #endregion
 
     private int savedNextStep; // 서버에서 받은 다음 단계 번호 임시 저장
+    private int savedScore;
 
     /// <summary>
     /// 서버로부터 받은 판정 결과(성공/실패, 점수, 피드백)를 결과 패널에 보여줍니다.
@@ -179,6 +180,7 @@ public class CookingVerifyPopup : MonoBehaviour
         stepScoreText.text = $"이번 단계 점수: <b>{data.score}</b>점";
 
         savedNextStep = data.next_step; // 다음 단계를 미리 저장해둠
+        savedScore = data.score;
 
         // 성공 여부에 따라 [확인] 혹은 [재시도] 버튼 노출 분기
         confirmBtn.gameObject.SetActive(data.is_success);
@@ -196,6 +198,7 @@ public class CookingVerifyPopup : MonoBehaviour
         CookingBattleController battleCtrl = Object.FindFirstObjectByType<CookingBattleController>();
         if (battleCtrl != null)
         {
+            battleCtrl.AddScore(savedScore);
             battleCtrl.HandleNextStep(savedNextStep);
         }Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
         Debug.Log("[Verify] 정화 성공! 다음 단계로 이동합니다.");
