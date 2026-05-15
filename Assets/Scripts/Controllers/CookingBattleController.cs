@@ -80,6 +80,11 @@ public class CookingBattleController : MonoBehaviour
         currentStepOrder = data.current_step;
         totalSteps = data.total_steps;
 
+        Debug.Log($"<color=yellow>[HP 검문소]</color> 서버가 준 현재 단계: {currentStepOrder} / 총 단계: {totalSteps}");
+
+        hpBar.maxValue = totalSteps;
+        hpBar.value = totalSteps - (currentStepOrder - 1);
+
         StepDetail detail = data.step_detail;
 
         // 1. HP바 연출: (총 단계 수)를 Max로, (남은 단계 수)를 Value로 설정
