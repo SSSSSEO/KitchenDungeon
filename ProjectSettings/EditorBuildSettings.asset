@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LoginScene.unity
     guid: fc45c39285def9a4081830501a835e81
+  - enabled: 1
+    path: Assets/Scenes/LobbyScene.unity
+    guid: d8225496980bc6e4489f1a2711b45676
+  - enabled: 1
+    path: Assets/Scenes/MonsterScene.unity
+    guid: 5087425e335fd8a45a57743b177af1a8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

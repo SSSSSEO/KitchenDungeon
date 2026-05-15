@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using KitchenDungeon.Models;
 using KitchenDungeon.UI.Popups;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 특정 스테이지 내의 몬스터(요리) 목록을 버튼으로 내비게이션하고, 
@@ -212,5 +213,11 @@ public class MonsterListController : MonoBehaviour
         if (goldText != null) goldText.text = net.TotalGold.ToString("N0"); // 숫자에 쉼표 추가
         if (levelText != null) levelText.text = $"LV. {net.UserLevel}";
         if (expText != null) expText.text = $"EXP: {net.CurrentExp}";
+    }
+
+    public void OnBackButtonClicked()
+    {
+        Debug.Log("로비 화면으로 돌아갑니다!");
+        SceneManager.LoadScene("LobbyScene");
     }
 }

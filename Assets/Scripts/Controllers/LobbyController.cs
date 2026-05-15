@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using TMPro;
 using KitchenDungeon.Models;
+using UnityEngine.SceneManagement;
 
 public class LobbyController : MonoBehaviour
 {
@@ -141,7 +142,7 @@ public class LobbyController : MonoBehaviour
         if (current.is_owned)
         {
             Debug.Log($"[Sprint 1] {current.name} 던전으로 입장합니다!");
-            // TODO: 전투 씬 전환 로직
+            SceneManager.LoadScene("MonsterScene");
         }
         else
         {
@@ -225,6 +226,12 @@ public class LobbyController : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnBackButtonClicked()
+    {
+        Debug.Log("로그인 화면으로 돌아갑니다!");
+        SceneManager.LoadScene("LoginScene");
     }
 }
 

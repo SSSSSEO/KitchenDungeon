@@ -3,40 +3,41 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public class SafeArea : MonoBehaviour
 {
-    RectTransform rectTransform;
-    Rect lastSafeArea = new Rect(0, 0, 0, 0);
+    private RectTransform panel;
+    private Rect lastSafeArea = new Rect(0, 0, 0, 0);
 
     void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
-        ApplySafeArea();
+        panel = GetComponent<RectTransform>();
+        Refresh();
     }
 
-    // 혹시 화면이 회전할 수도 있으니 Update에서 체크 (세로 고정 게임이면 생략 가능)
     void Update()
     {
-        if (lastSafeArea != Screen.safeArea)
+        Refresh();
+    }
+
+    void Refresh()
+    {
+        Rect safeArea = Screen.safeArea;
+
+        if (safeArea != lastSafeArea)
         {
-            ApplySafeArea();
+            lastSafeArea = safeArea;
+            ApplySafeArea(safeArea);
         }
     }
 
-    void ApplySafeArea()
+    void ApplySafeArea(Rect r)
     {
-        Rect safeArea = Screen.safeArea;
-        lastSafeArea = safeArea;
-
-        // 세이프 에어리어의 픽셀 좌표를 0~1 사이의 비율(Anchor) 값으로 변환
-        Vector2 anchorMin = safeArea.position;
-        Vector2 anchorMax = safeArea.position + safeArea.size;
-
+        Vector2 anchorMin = r.position;
+        Vector2 anchorMax = r.position + r.size;
         anchorMin.x /= Screen.width;
         anchorMin.y /= Screen.height;
         anchorMax.x /= Screen.width;
         anchorMax.y /= Screen.height;
 
-        // 변환된 값을 UI의 Anchor에 적용
-        rectTransform.anchorMin = anchorMin;
-        rectTransform.anchorMax = anchorMax;
+        panel.anchorMin = anchorMin;
+        panel.anchorMax = anchorMax;
     }
 }
