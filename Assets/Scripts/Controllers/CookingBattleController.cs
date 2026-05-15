@@ -72,6 +72,10 @@ public class CookingBattleController : MonoBehaviour
     /// </summary>
     public void InitializeBattle(CookingStepData data)
     {
+        // [추가] 서버에서 새로 받은 데이터를 NetworkManager에도 동기화한다!
+        // 이렇게 해야 전역적으로 현재 진행 상황이 최신화됨.
+        NetworkManager.Instance.CurrentSessionData = data;
+
         recipeId = data.recipe_id;
         currentStepOrder = data.current_step;
         totalSteps = data.total_steps;

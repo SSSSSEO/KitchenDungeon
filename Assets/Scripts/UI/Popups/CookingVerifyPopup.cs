@@ -110,6 +110,7 @@ public class CookingVerifyPopup : MonoBehaviour
     {
         attackButton.interactable = false;
         attackBtnText.text = "AI 판정 중...";
+        Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
 
         string url = $"{NetworkManager.Instance.BaseUrl}/cooking/verify";
 
@@ -196,7 +197,7 @@ public class CookingVerifyPopup : MonoBehaviour
         if (battleCtrl != null)
         {
             battleCtrl.HandleNextStep(savedNextStep);
-        }
+        }Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
         Debug.Log("[Verify] 정화 성공! 다음 단계로 이동합니다.");
     }
 
