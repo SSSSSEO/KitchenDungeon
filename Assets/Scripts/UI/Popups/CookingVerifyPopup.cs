@@ -19,12 +19,14 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private GameObject resultGroup;
 
     [Header("--- 입력 모드 (Input Mode) UI ---")]
+    [SerializeField] private Button photoSelectButton; // [추가] 사진을 찍거나 불러오는 액션 버튼
     [SerializeField] private TextMeshProUGUI guideTitleText; // 가이드 제목
     [SerializeField] private Image photoPreview;            // 찍은 사진 미리보기 칸
     [SerializeField] private Button attackButton;           // 최종 [공격하기] 버튼
     [SerializeField] private TextMeshProUGUI attackBtnText;  // 버튼 텍스트 (판정 중 시 텍스트 변경용)
 
     [Header("--- 결과 모드 (Result Mode) UI ---")]
+    [SerializeField] private TextMeshProUGUI successStatusText; // [추가] 성공 여부 상태 텍스트
     [SerializeField] private TextMeshProUGUI aiFeedbackText; // AI의 한마디 (ai_feedback)
     [SerializeField] private TextMeshProUGUI stepScoreText;  // 이번 단계 점수
     [SerializeField] private Button confirmBtn;             // 성공 시 [확인] 버튼
@@ -43,6 +45,12 @@ public class CookingVerifyPopup : MonoBehaviour
         attackButton.onClick.AddListener(OnVerifyRequest);
         retryBtn.onClick.AddListener(() => SwitchState(true)); // 재시도 시 다시 입력 모드로
         confirmBtn.onClick.AddListener(OnConfirmSuccess);
+
+        // [추가] 사진 선택 버튼 클릭 시 테스트 함수 실행
+        if (photoSelectButton != null)
+        {
+            photoSelectButton.onClick.AddListener(OnClickTestPhotoSelect);
+        }
 
         // 씬 시작 시에는 비활성 상태
         gameObject.SetActive(false);
@@ -152,6 +160,18 @@ public class CookingVerifyPopup : MonoBehaviour
     private void ShowResult(CookingVerifyData data)
     {
         SwitchState(false); // 결과 모드로 전환
+
+        // 1. 성공 여부에 따른 상태 텍스트 및 색상 변경
+        if (data.is_success)
+        {
+            successStatusText.text = "<size=120%>SUCCESS</size>";
+            successStatusText.color = Color.green; // 성공은 초록색!
+        }
+        else
+        {
+            successStatusText.text = "<size=120%>FAIL</size>";
+            successStatusText.color = Color.red;   // 실패는 빨간색!
+        }
 
         // AI의 한마디 노출 (RichText 사용 가능)
         aiFeedbackText.text = $"<color=#FFD700>\"AI 명장\"</color>\n{data.feedback}";
