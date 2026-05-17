@@ -148,10 +148,11 @@ public class MonsterListController : MonoBehaviour
                 break;
 
             case "LOCKED":
-                monsterStatusText.text = "<color=gray>잠김</color>";
+                monsterStatusText.text = "잠김";
                 monsterIllustrationDisp.color = Color.black; // 실루엣 처리
+                monsterNameText.text = "???";
                 infoButton.interactable = false;
-                infoButtonText.text = "접근 불가";
+                infoButtonText.text = "접근불가";
                 break;
         }
 
