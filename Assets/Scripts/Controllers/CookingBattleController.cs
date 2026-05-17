@@ -45,9 +45,9 @@ public class CookingBattleController : MonoBehaviour
 
     [Header("--- 승리 연출용 UI ---")]
     [Tooltip("중앙의 몬스터 일러스트 이미지")]
-    [SerializeField] private Image monsterImage;
+    [SerializeField] private GameObject badMonsterObj;
     [Tooltip("정화가 완료되었을 때 바뀔 깨끗한 요리 이미지")]
-    [SerializeField] private Sprite purifiedMonsterSprite;
+    [SerializeField] private GameObject purifiedMonsterObj;
 
     [Header("--- 승리 결과 팝업 ---")]
     [Tooltip("승리 시 나타날 결과창 부모 오브젝트")]
@@ -101,9 +101,6 @@ public class CookingBattleController : MonoBehaviour
         totalSteps = data.total_steps;
 
         Debug.Log($"<color=yellow>[HP 검문소]</color> 서버가 준 현재 단계: {currentStepOrder} / 총 단계: {totalSteps}");
-
-        hpBar.maxValue = totalSteps;
-        hpBar.value = totalSteps - (currentStepOrder - 1);
 
         StepDetail detail = data.step_detail;
 
@@ -282,13 +279,11 @@ public class CookingBattleController : MonoBehaviour
         // 1. 체력바를 0으로 만듦 (마지막 타격 확인)
         hpBar.value = 0;
 
-        // 2. 몬스터 일러스트를 정화된 일러스트로 교체
-        if (monsterImage != null && purifiedMonsterSprite != null)
-        {
-            monsterImage.sprite = purifiedMonsterSprite;
-            // 약간의 연출: 정화되었다는 느낌을 주도록 하얀색으로 깜빡이는 연출 등을 추가하면 좋음
-            monsterImage.color = Color.white;
-        }
+        // 2. 나쁜 몬스터를 퇴근시키고, 움직이는 착한 김치 애니메이션을 출근시킴
+
+        if(badMonsterObj != null) badMonsterObj.SetActive(false);
+        if(purifiedMonsterObj != null) purifiedMonsterObj.SetActive(true);
+
 
         // 3. 서버 세션 데이터에서 고정 보상(Gold, Exp)을 가져와 UI에 세팅
         if (NetworkManager.Instance.CurrentSessionData != null)
@@ -321,7 +316,7 @@ public class CookingBattleController : MonoBehaviour
         NetworkManager.Instance.CurrentSessionData = null;
 
         Debug.Log("[Battle] 로비로 귀환합니다.");
-        SceneManager.LoadScene("LobbyScene"); // 로비 씬 이름에 맞춰 수정
+        SceneManager.LoadScene("MonsterScene"); // 로비 씬 이름에 맞춰 수정
     }
 
     public void AddScore(int scoreToAdd)
