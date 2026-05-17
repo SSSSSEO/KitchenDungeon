@@ -78,14 +78,40 @@ public class CookingVerifyPopup : MonoBehaviour
     private void TakePhoto()
     {
         // NativeCamera를 이용한 실제 촬영 로직
+        LogToScreen("카메라 실행...");
+
         NativeCamera.TakePicture((path) =>
         {
-            if (path != null)
+            if (path == null)
             {
-                Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024);
-                if (tex != null) OnPhotoCaptured(tex);
+                LogToScreen("결과: 촬영 취소됨");
+                return;
             }
-        }, 1024);
+
+            LogToScreen($"파일 경로 확인: {path}");
+
+            // 1. 파일이 실제로 존재하는지 체크
+            if (!System.IO.File.Exists(path))
+            {
+                LogToScreen("에러: 해당 경로에 파일이 존재하지 않음!");
+                return;
+            }
+
+            // 2. 이미지 로드 시도
+            // 1024는 최대 해상도 제한이야. 너무 크면 메모리 부족으로 터질 수 있어.
+            Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024, false);
+
+            if (tex == null)
+            {
+                LogToScreen("에러: LoadImageAtPath가 null을 반환함");
+            }
+            else
+            {
+                LogToScreen($"성공: 텍스처 로드 완료 ({tex.width}x{tex.height})");
+                OnPhotoCaptured(tex);
+            }
+
+        }, 1024); // 여기서도 최대 해상도를 1024로 제한해서 안전하게 가져오자
     }
 
     /// <summary>
