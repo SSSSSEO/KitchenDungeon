@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 21a809b6b2f3dc4449165bf6d09731ed
+guid: 802944f90e167614aaf0c6e30b04eb74
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6301429047446442448
-    second: gold_0
+      213: 4773920385891454366
+    second: GOLD (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: gold_0
+      name: GOLD (1)_0
       rect:
         serializedVersion: 2
         x: 1
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 03e60a1faa3dc88a0800000000000000
-      internalID: -6301429047446442448
+      spriteID: e9d4e033c4f504240800000000000000
+      internalID: 4773920385891454366
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      gold_0: -6301429047446442448
+      GOLD (1)_0: 4773920385891454366
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
