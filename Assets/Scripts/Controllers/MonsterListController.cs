@@ -63,6 +63,9 @@ public class MonsterListController : MonoBehaviour
 
     private void Start()
     {
+        // [수정] NetworkManager에서 선택된 스테이지 ID를 가져옴
+        currentStageId = NetworkManager.Instance.SelectedStageId;
+
         // 1. 씬 시작 시 NetworkManager에 저장된 최신 유저 정보로 상단 UI 갱신
         UpdateUserStatsUI();
 
@@ -117,39 +120,37 @@ public class MonsterListController : MonoBehaviour
         MonsterData current = monsterList[currentMonsterIndex];
         monsterNameText.text = current.recipe_name;
 
-        // --- 몬스터 상태별 UI 분기 로직 (핵심) ---
+        // [핵심] 리스트 인덱스가 아니라 recipe_id로 이미지를 직접 로드!
+        string stateSuffix = (current.visual_state == "PURIFIED") ? "purified" : "corrupted";
+        string spritePath = $"Monsters/monster_{current.recipe_id}_{stateSuffix}";
+
+        Sprite loadedSprite = Resources.Load<Sprite>(spritePath);
+        if (loadedSprite != null)
+        {
+            monsterIllustrationDisp.sprite = loadedSprite;
+        }
+
+        // --- 상태별 UI 처리 ---
         switch (current.visual_state)
         {
-            case "PURIFIED": // 1. 이미 정화(클리어)한 요리
-                // 정화된 이미지 리스트에서 인덱스에 맞는 이미지 추출
-                if (currentMonsterIndex < purifiedSprites.Count)
-                    monsterIllustrationDisp.sprite = purifiedSprites[currentMonsterIndex];
-
-                monsterStatusText.text = "<color=green>정화 완료</color>"; // Rich Text 사용 (초록색)
-                monsterIllustrationDisp.color = Color.white;            // 원본 색상 그대로
-                infoButton.interactable = true;                         // 정보 팝업 가능
+            case "PURIFIED":
+                monsterStatusText.text = "<color=green>정화 완료</color>";
+                monsterIllustrationDisp.color = Color.white;
+                infoButton.interactable = true;
                 infoButtonText.text = "재도전";
                 break;
 
-            case "CORRUPTED": // 2. 도전 가능한 오염된 요리
-                // 오염된 전용 이미지 리스트에서 인덱스에 맞는 이미지 추출
-                if (currentMonsterIndex < corruptedSprites.Count)
-                    monsterIllustrationDisp.sprite = corruptedSprites[currentMonsterIndex];
-
-                monsterStatusText.text = "<color=red>오염 상태</color>"; // Rich Text 사용 (빨간색)
-                monsterIllustrationDisp.color = Color.white;           // 오염 이미지 자체를 쓰므로 색상 변조 없음
-                infoButton.interactable = true;                        // 요리 시작 가능
+            case "CORRUPTED":
+                monsterStatusText.text = "<color=red>오염 상태</color>";
+                monsterIllustrationDisp.color = Color.white;
+                infoButton.interactable = true;
                 infoButtonText.text = "정찰하기";
                 break;
 
-            case "LOCKED": // 3. 아직 해금되지 않은 요리
-                // 시각적으로는 오염된 이미지를 쓰되, 검정색으로 칠해 실루엣만 보여줌
-                if (currentMonsterIndex < corruptedSprites.Count)
-                    monsterIllustrationDisp.sprite = corruptedSprites[currentMonsterIndex];
-
-                monsterStatusText.text = "<color=gray>잠김 (이전 요리 정화 필요)</color>";
-                monsterIllustrationDisp.color = Color.black;           // 검은색 실루엣 처리
-                infoButton.interactable = false;                       // 버튼 클릭 불가
+            case "LOCKED":
+                monsterStatusText.text = "<color=gray>잠김</color>";
+                monsterIllustrationDisp.color = Color.black; // 실루엣 처리
+                infoButton.interactable = false;
                 infoButtonText.text = "접근 불가";
                 break;
         }

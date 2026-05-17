@@ -141,6 +141,9 @@ public class LobbyController : MonoBehaviour
 
         if (current.is_owned)
         {
+            // [수정] 입장하기 전에 선택한 스테이지 ID를 기록!
+            NetworkManager.Instance.SelectedStageId = current.stage_id;
+
             Debug.Log($"[Sprint 1] {current.name} 던전으로 입장합니다!");
             SceneManager.LoadScene("MonsterScene");
         }

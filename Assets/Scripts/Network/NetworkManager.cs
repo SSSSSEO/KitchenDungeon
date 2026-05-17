@@ -21,6 +21,9 @@ public class NetworkManager : MonoBehaviour
     public int UserLevel;
     public int CurrentExp;
 
+    [Header("--- 스테이지 ID 보관용 ---")] 
+    public int SelectedStageId { get; set; } // 선택된 스테이지 ID를 임시 보관
+
     [Header("--- 요리 전투 세션 정보 (씬 이동 데이터 브릿지) ---")]
     [Tooltip("팝업에서 시작 버튼을 눌렀을 때 서버에서 받은 첫 단계 정보를 저장. 인게임 씬에서 이를 참조함.")]
     public CookingStepData CurrentSessionData;
