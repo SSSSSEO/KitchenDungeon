@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a76e5a61a5aa5d648a9a44c8f5c7f061
+guid: a814b35e46fb9d84ebc5dd98c1246bd9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1453080917705474787
-    second: Korea_bg (1)_0
+      213: 2532073981782216884
+    second: China_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Korea_bg (1)_0
+      name: China_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 108
-        height: 170
+        y: 14
+        width: 107
+        height: 123
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d1d3446aa9e95dbe0800000000000000
-      internalID: -1453080917705474787
+      spriteID: 4b05325fedbb32320800000000000000
+      internalID: 2532073981782216884
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Korea_bg (1)_0: -1453080917705474787
+      China_0: 2532073981782216884
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

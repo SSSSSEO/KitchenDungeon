@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 32052b4f0c476474996eb6e7b15f39a5
+guid: 8d6747647fc2fb44baa5f119b796bb90
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6962309153325322492
-    second: Korea_bg_0
+      213: 4042250114822578979
+    second: exp_0
+  - first:
+      213: 8196738021910380360
+    second: exp_1
+  - first:
+      213: -4285917737307444110
+    second: exp_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +52,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +132,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Korea_bg_0
+      name: exp_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 108
-        height: 170
+        x: 2
+        y: 4
+        width: 10
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +147,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf0186c79471f9060800000000000000
-      internalID: 6962309153325322492
+      spriteID: 323284b0015f81830800000000000000
+      internalID: 4042250114822578979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: exp_1
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 4
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 84ff7e08dc9a0c170800000000000000
+      internalID: 8196738021910380360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: exp_2
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 4
+        width: 10
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27c6e33968c5584c0800000000000000
+      internalID: -4285917737307444110
       vertices: []
       indices: 
       edges: []
@@ -151,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +211,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Korea_bg_0: 6962309153325322492
+      exp_0: 4042250114822578979
+      exp_1: 8196738021910380360
+      exp_2: -4285917737307444110
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
