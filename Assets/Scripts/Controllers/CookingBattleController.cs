@@ -57,10 +57,9 @@ public class CookingBattleController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI rewardExpText;
     [SerializeField] private Button lobbyExitButton; // 로비로 돌아가기 버튼
 
-    [Header("--- 레시피 고정 데이터 (보상) ---")]
-    private int rewardGold;
-    private int rewardExp;
-    private string finalImageUrl;
+    [Header("--- 몬스터 프리팹 컨테이너 ---")]
+    [Tooltip("몬스터가 나타날 화면상의 위치 (부모 오브젝트)")]
+    [SerializeField] private Transform monsterAnchor;
 
     // 내부 관리 변수
     private int recipeId;
@@ -73,8 +72,15 @@ public class CookingBattleController : MonoBehaviour
     private bool isTimerRunning = false;
     private Coroutine timerCoroutine;
 
+    // 현재 씬에 나와있는 몬스터 오브젝트들
+    private GameObject currentBadInstance;
+    private GameObject currentGoodInstance;
+
     private void Start()
     {
+        // 승리 팝업 숨기기
+        victoryPopupGroup.SetActive(false);
+
         // 씬이 시작되면 NetworkManager가 들고 있는 세션 데이터를 확인합니다.
         if (NetworkManager.Instance.CurrentSessionData != null)
         {
@@ -99,6 +105,9 @@ public class CookingBattleController : MonoBehaviour
         recipeId = data.recipe_id;
         currentStepOrder = data.current_step;
         totalSteps = data.total_steps;
+
+        // [핵심] 레시피 ID에 맞는 프리팹들을 로드하고 배치함
+        SpawnMonsterPrefabs(recipeId);
 
         Debug.Log($"<color=yellow>[HP 검문소]</color> 서버가 준 현재 단계: {currentStepOrder} / 총 단계: {totalSteps}");
 
@@ -274,18 +283,15 @@ public class CookingBattleController : MonoBehaviour
     /// </summary>
     private void ShowVictoryResult()
     {
-        Debug.Log("<color=cyan>[Victory] 클리어 성공! 몬스터를 성공적으로 정화했습니다! </color>");
-
-        // 1. 체력바를 0으로 만듦 (마지막 타격 확인)
+        Debug.Log("<color=cyan>[Victory] 정화 완료!</color>");
         hpBar.value = 0;
 
-        // 2. 나쁜 몬스터를 퇴근시키고, 움직이는 착한 김치 애니메이션을 출근시킴
+        // [연출] 나쁜 몬스터 꺼지고 착한 몬스터 켜짐
+        if (currentBadInstance != null) currentBadInstance.SetActive(false);
+        if (currentGoodInstance != null) currentGoodInstance.SetActive(true);
 
-        if(badMonsterObj != null) badMonsterObj.SetActive(false);
-        if(purifiedMonsterObj != null) purifiedMonsterObj.SetActive(true);
 
-
-        // 3. 서버 세션 데이터에서 고정 보상(Gold, Exp)을 가져와 UI에 세팅
+        // 서버 세션 데이터에서 고정 보상(Gold, Exp)을 가져와 UI에 세팅
         if (NetworkManager.Instance.CurrentSessionData != null)
         {
             var data = NetworkManager.Instance.CurrentSessionData;
@@ -357,6 +363,34 @@ public class CookingBattleController : MonoBehaviour
                 Debug.LogError($"[Battle] 이미지 로드 실패 ({url}): {request.error}");
                 // 실패 시 기본 이미지로 대체하거나 guideImage를 비활성화하는 처리 추가 가능
             }
+        }
+    }
+
+    /// <summary>
+    /// Resources 폴더에서 애니메이션이 포함된 프리팹을 로드하여 생성함
+    /// </summary>
+    private void SpawnMonsterPrefabs(int id)
+    {
+        // 0. 기존 몬스터가 있다면 청소 (씬 재사용을 위해)
+        if (currentBadInstance != null) Destroy(currentBadInstance);
+        if (currentGoodInstance != null) Destroy(currentGoodInstance);
+
+        // 1. 오염된 몬스터 로드 및 생성
+        // 경로: Assets/Resources/Monsters/Monster_1_Bad.prefab
+        GameObject badPrefab = Resources.Load<GameObject>($"Monsters/Monster_{id}_Bad");
+        if (badPrefab != null)
+        {
+            currentBadInstance = Instantiate(badPrefab, monsterAnchor);
+            currentBadInstance.SetActive(true); // 처음엔 나쁜 놈 등장
+        }
+
+        // 2. 정화된 몬스터 로드 및 생성
+        // 경로: Assets/Resources/Monsters/Monster_1_Good.prefab
+        GameObject goodPrefab = Resources.Load<GameObject>($"Monsters/Monster_{id}_Good");
+        if (goodPrefab != null)
+        {
+            currentGoodInstance = Instantiate(goodPrefab, monsterAnchor);
+            currentGoodInstance.SetActive(false); // 일단 숨겨둠
         }
     }
 }
