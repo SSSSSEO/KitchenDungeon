@@ -34,7 +34,9 @@ public class CookingVerifyPopup : MonoBehaviour
 
     [Header("--- 데이터 및 시연용 설정 ---")]
     [SerializeField] private Texture2D testTexture; // 에디터 시연용 더미 이미지
-   
+
+    [SerializeField] private TextMeshProUGUI debugScreenText; // 핸드폰 디버그 용
+
     // 내부 통신용 데이터
     private int recipeId;
     private int stepOrder;
@@ -123,10 +125,27 @@ public class CookingVerifyPopup : MonoBehaviour
     /// </summary>
     public void OnPhotoCaptured(Texture2D tex)
     {
+        if (tex == null)
+        {
+            LogToScreen("로드된 텍스처가 null입니다!");
+            return;
+        }
+        // [핵심] 유니티 메인 스레드에서만 UI를 수정하도록 보장
+        // 사실 NativeCamera는 메인 스레드 콜백을 지원하지만, 
+        // 혹시 모를 상황을 대비해 Rect와 Apply를 확실히 해줍니다.
         capturedTexture = tex;
-        // 미리보기 칸에 사진 표시
-        photoPreview.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
-        attackButton.interactable = true; // 사진이 생겼으니 이제 공격 버튼 활성화
+        capturedTexture.filterMode = FilterMode.Bilinear;
+        capturedTexture.Apply(); // 데이터 적용 확정
+
+        // 텍스처 정보 로그 (폰에서도 확인 가능하게)
+        LogToScreen($"사진 로드 성공: {tex.width}x{tex.height}");
+
+        // 스프라이트 생성 시 Rect 정보를 명확히 전달
+        Rect rect = new Rect(0, 0, tex.width, tex.height);
+        photoPreview.sprite = Sprite.Create(tex, rect, new Vector2(0.5f, 0.5f));
+
+        // 버튼 활성화
+        attackButton.interactable = true;
     }
 
     /// <summary>
@@ -255,5 +274,11 @@ public class CookingVerifyPopup : MonoBehaviour
         Debug.Log("[Verify] 공격 성공! 다음 단계로 이동합니다.");
     }
     #endregion
+
+    // 로그 찍고 싶을 때마다 사용
+    private void LogToScreen(string msg)
+    {
+        if (debugScreenText != null) debugScreenText.text += $"\n{msg}";
+    }
 }
 
