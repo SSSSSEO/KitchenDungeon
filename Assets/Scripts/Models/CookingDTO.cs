@@ -42,6 +42,9 @@ namespace KitchenDungeon.Models
         public int recipe_id;
         public int current_step;        // 현재 진행해야 할 단계 번호
         public int total_steps;         // 체력바(HP) 최대치 설정을 위한 총 단계수
+        // [추가] 레시피 고유의 고정 보상 및 이미지 정보
+        public int reward_gold;         // Recipes 테이블의 reward_gold
+        public int reward_exp;          // Recipes 테이블의 reward_exp
         public StepDetail step_detail;  // 현재 단계의 구체적 정보
     }
 

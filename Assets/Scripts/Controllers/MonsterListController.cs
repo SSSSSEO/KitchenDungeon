@@ -128,7 +128,7 @@ public class MonsterListController : MonoBehaviour
                 monsterStatusText.text = "<color=green>정화 완료</color>"; // Rich Text 사용 (초록색)
                 monsterIllustrationDisp.color = Color.white;            // 원본 색상 그대로
                 infoButton.interactable = true;                         // 정보 팝업 가능
-                infoButtonText.text = "정보 보기 (재도전)";
+                infoButtonText.text = "재도전";
                 break;
 
             case "CORRUPTED": // 2. 도전 가능한 오염된 요리
@@ -139,7 +139,7 @@ public class MonsterListController : MonoBehaviour
                 monsterStatusText.text = "<color=red>오염 상태</color>"; // Rich Text 사용 (빨간색)
                 monsterIllustrationDisp.color = Color.white;           // 오염 이미지 자체를 쓰므로 색상 변조 없음
                 infoButton.interactable = true;                        // 요리 시작 가능
-                infoButtonText.text = "정보 보기 (정화하기)";
+                infoButtonText.text = "정찰하기";
                 break;
 
             case "LOCKED": // 3. 아직 해금되지 않은 요리

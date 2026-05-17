@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -41,6 +42,25 @@ public class CookingBattleController : MonoBehaviour
 
     [Header("--- 팝업 연결 ---")]
     [SerializeField] private CookingVerifyPopup verifyPopup; // 사진 제출용 부분 팝업
+
+    [Header("--- 승리 연출용 UI ---")]
+    [Tooltip("중앙의 몬스터 일러스트 이미지")]
+    [SerializeField] private Image monsterImage;
+    [Tooltip("정화가 완료되었을 때 바뀔 깨끗한 요리 이미지")]
+    [SerializeField] private Sprite purifiedMonsterSprite;
+
+    [Header("--- 승리 결과 팝업 ---")]
+    [Tooltip("승리 시 나타날 결과창 부모 오브젝트")]
+    [SerializeField] private GameObject victoryPopupGroup;
+    [SerializeField] private TextMeshProUGUI totalScoreText;
+    [SerializeField] private TextMeshProUGUI rewardGoldText;
+    [SerializeField] private TextMeshProUGUI rewardExpText;
+    [SerializeField] private Button lobbyExitButton; // 로비로 돌아가기 버튼
+
+    [Header("--- 레시피 고정 데이터 (보상) ---")]
+    private int rewardGold;
+    private int rewardExp;
+    private string finalImageUrl;
 
     // 내부 관리 변수
     private int recipeId;
@@ -97,6 +117,13 @@ public class CookingBattleController : MonoBehaviour
         // 2. 미션 정보 텍스트 주입
         descText.text = detail.description;
         tipText.text = $"<color=#FFD700>Tip:</color> {detail.step_tip}";
+
+        // [추가] 가이드 이미지 로드 로직
+        // DTO의 image_url이 비어있지 않다면 서버에서 이미지를 가져옴
+        if (guideImage != null && !string.IsNullOrEmpty(detail.image_url))
+        {
+            StartCoroutine(LoadGuideImage(detail.image_url));
+        }
 
         // 3. 타이머 설정 (timer_seconds가 0이면 UI를 숨김)
         SetupTimer(detail.timer_seconds);
@@ -250,8 +277,51 @@ public class CookingBattleController : MonoBehaviour
     /// </summary>
     private void ShowVictoryResult()
     {
-        Debug.Log("<color=cyan>[Victory] 모든 요리 단계를 클리어했습니다! 몬스터가 정화되었습니다.</color>");
-        // TODO: 승리 팝업 띄우기 및 로비 이동 로직
+        Debug.Log("<color=cyan>[Victory] 클리어 성공! 몬스터를 성공적으로 정화했습니다! </color>");
+
+        // 1. 체력바를 0으로 만듦 (마지막 타격 확인)
+        hpBar.value = 0;
+
+        // 2. 몬스터 일러스트를 정화된 일러스트로 교체
+        if (monsterImage != null && purifiedMonsterSprite != null)
+        {
+            monsterImage.sprite = purifiedMonsterSprite;
+            // 약간의 연출: 정화되었다는 느낌을 주도록 하얀색으로 깜빡이는 연출 등을 추가하면 좋음
+            monsterImage.color = Color.white;
+        }
+
+        // 3. 서버 세션 데이터에서 고정 보상(Gold, Exp)을 가져와 UI에 세팅
+        if (NetworkManager.Instance.CurrentSessionData != null)
+        {
+            var data = NetworkManager.Instance.CurrentSessionData;
+
+            // 결과창 텍스트 업데이트
+            totalScoreText.text = $"최종 점수: {accumulatedScore:N0}";
+            rewardGoldText.text = $"+ {data.reward_gold:N0} GOLD";
+            rewardExpText.text = $"+ {data.reward_exp:N0} EXP";
+        }
+
+        // 4. 결과 팝업 활성화
+        if (victoryPopupGroup != null)
+        {
+            victoryPopupGroup.SetActive(true);
+            
+            // 버튼 연결 (이전 리스너 제거 후 새로 등록)
+            lobbyExitButton.onClick.RemoveAllListeners();
+            lobbyExitButton.onClick.AddListener(ReturnToLobby);
+        }
+    }
+
+    /// <summary>
+    /// 모든 정화가 끝나고 로비 씬으로 돌아감.
+    /// </summary>
+    private void ReturnToLobby()
+    {
+        // NetworkManager에 저장된 세션 데이터를 비워줌 (전투 종료)
+        NetworkManager.Instance.CurrentSessionData = null;
+
+        Debug.Log("[Battle] 로비로 귀환합니다.");
+        SceneManager.LoadScene("LobbyScene"); // 로비 씬 이름에 맞춰 수정
     }
 
     public void AddScore(int scoreToAdd)
@@ -259,5 +329,39 @@ public class CookingBattleController : MonoBehaviour
         accumulatedScore += scoreToAdd;
         scoreText.text = accumulatedScore.ToString("N0"); // 1,000 단위 콤마 찍기
         Debug.Log($"[Battle] 점수 획득! 현재 총점: {accumulatedScore}");
+    }
+
+    /// <summary>
+    /// 서버 URL로부터 이미지를 다운로드하여 가이드 이미지 UI에 적용합니다.
+    /// </summary>
+    private IEnumerator LoadGuideImage(string url)
+    {
+        // 텍스처(Texture) 전용 WebRequest 사용
+        using (UnityWebRequest request = UnityWebRequestTexture.GetTexture(url))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                // 내려받은 데이터를 Texture2D로 변환
+                Texture2D texture = DownloadHandlerTexture.GetContent(request);
+
+                // Texture2D를 UI Image 컴포넌트에 쓸 수 있는 Sprite로 변환
+                // (중심점은 중앙 0.5, 0.5)
+                Sprite newSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+
+                guideImage.sprite = newSprite;
+
+                // 이미지 비율이 깨지지 않게 하고 싶다면 아래 옵션 사용 (선택)
+                // guideImage.preserveAspect = true;
+
+                Debug.Log($"[Battle] 가이드 이미지 로드 완료: {url}");
+            }
+            else
+            {
+                Debug.LogError($"[Battle] 이미지 로드 실패 ({url}): {request.error}");
+                // 실패 시 기본 이미지로 대체하거나 guideImage를 비활성화하는 처리 추가 가능
+            }
+        }
     }
 }

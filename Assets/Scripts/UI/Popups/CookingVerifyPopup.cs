@@ -176,7 +176,7 @@ public class CookingVerifyPopup : MonoBehaviour
         }
 
         // AI의 한마디 노출 (RichText 사용 가능)
-        aiFeedbackText.text = $"<color=#FFD700>\"AI 명장\"</color>\n{data.feedback}";
+        aiFeedbackText.text = $"<color=#FFD700>\"AI의 판정 :\"</color>\n{data.feedback}";
         stepScoreText.text = $"이번 단계 점수: <b>{data.score}</b>점";
 
         savedNextStep = data.next_step; // 다음 단계를 미리 저장해둠
@@ -201,7 +201,7 @@ public class CookingVerifyPopup : MonoBehaviour
             battleCtrl.AddScore(savedScore);
             battleCtrl.HandleNextStep(savedNextStep);
         }Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
-        Debug.Log("[Verify] 정화 성공! 다음 단계로 이동합니다.");
+        Debug.Log("[Verify] 공격 성공! 다음 단계로 이동합니다.");
     }
 
     /// <summary>
