@@ -96,6 +96,7 @@ public class CookingVerifyPopup : MonoBehaviour
         recipeId = rId;
         stepOrder = sOrder;
         guideTitleText.text = $"<b>미션:</b> {detail.description}";
+        LogToScreen("가나다라마바사아자차카타파하");
 
         SwitchState(true); // 입력 모드로 초기화
         gameObject.SetActive(true);
@@ -278,7 +279,7 @@ public class CookingVerifyPopup : MonoBehaviour
     // 로그 찍고 싶을 때마다 사용
     private void LogToScreen(string msg)
     {
-        if (debugScreenText != null) debugScreenText.text += $"\n{msg}";
+        debugScreenText.text += $"\n{msg}";
     }
 }
 
