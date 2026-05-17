@@ -1635,7 +1635,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6962309153325322492, guid: 32052b4f0c476474996eb6e7b15f39a5, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1818,7 +1818,9 @@ MonoBehaviour:
   stageNameText: {fileID: 1097089707}
   stagePriceText: {fileID: 1056722586}
   stageIllustrationDisp: {fileID: 1506226930}
-  stageSprites: []
+  stageSprites:
+  - {fileID: -1453080917705474787, guid: a76e5a61a5aa5d648a9a44c8f5c7f061, type: 3}
+  - {fileID: 2036642432181053845, guid: 9261109161c095e4da0ed86d69e1ff4f, type: 3}
   prevButton: {fileID: 16108643}
   nextButton: {fileID: 1686338694}
   actionButton: {fileID: 925532236}
@@ -2146,7 +2148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 294.11176, y: -50}
+  m_AnchoredPosition: {x: 294.1118, y: -50}
   m_SizeDelta: {x: 165.25, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1725072380
@@ -2377,7 +2379,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 503.51965, y: -50}
+  m_AnchoredPosition: {x: 503.51962, y: -50}
   m_SizeDelta: {x: 165.25, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1764255936
