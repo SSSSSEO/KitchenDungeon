@@ -43,12 +43,6 @@ public class CookingBattleController : MonoBehaviour
     [Header("--- 팝업 연결 ---")]
     [SerializeField] private CookingVerifyPopup verifyPopup; // 사진 제출용 부분 팝업
 
-    [Header("--- 승리 연출용 UI ---")]
-    [Tooltip("중앙의 몬스터 일러스트 이미지")]
-    [SerializeField] private GameObject badMonsterObj;
-    [Tooltip("정화가 완료되었을 때 바뀔 깨끗한 요리 이미지")]
-    [SerializeField] private GameObject purifiedMonsterObj;
-
     [Header("--- 승리 결과 팝업 ---")]
     [Tooltip("승리 시 나타날 결과창 부모 오브젝트")]
     [SerializeField] private GameObject victoryPopupGroup;
