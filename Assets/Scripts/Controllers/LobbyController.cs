@@ -162,8 +162,8 @@ public class LobbyController : MonoBehaviour
         // 닉네임과 경험치 정보까지 포함하여 갱신
         if (nicknameText != null) nicknameText.text = NetworkManager.Instance.Nickname;
         if (goldText != null) goldText.text = NetworkManager.Instance.TotalGold.ToString("N0");
-        if (levelText != null) levelText.text = $"LV. {NetworkManager.Instance.UserLevel}";
-        if (expText != null) expText.text = $"EXP: {NetworkManager.Instance.CurrentExp}";
+        if (levelText != null) levelText.text = $"{NetworkManager.Instance.UserLevel}";
+        if (expText != null) expText.text = $"{NetworkManager.Instance.CurrentExp}";
     }
 
     /// <summary>

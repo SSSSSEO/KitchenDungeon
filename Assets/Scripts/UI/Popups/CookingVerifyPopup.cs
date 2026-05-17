@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 using TMPro;
-using KitchenDungeon.Models;
+using KitchenDungeon.Models; 
 
 /// <summary>
 /// 전투 화면 하단에 위치하여 사진 촬영 및 AI 검증 결과를 담당하는 부분 팝업입니다.
@@ -32,12 +32,13 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private Button confirmBtn;             // 성공 시 [확인] 버튼
     [SerializeField] private Button retryBtn;               // 실패 시 [재시도] 버튼
 
+    [Header("--- 데이터 및 시연용 설정 ---")]
+    [SerializeField] private Texture2D testTexture; // 에디터 시연용 더미 이미지
+   
     // 내부 통신용 데이터
     private int recipeId;
     private int stepOrder;
     private Texture2D capturedTexture; // 촬영된 이미지 저장용 (미리보기 및 전송용)
-
-    [SerializeField] private Texture2D testTexture; // 인스펙터에서 아무 이미지나 넣어둬
 
     private void Start()
     {
@@ -47,13 +48,42 @@ public class CookingVerifyPopup : MonoBehaviour
         confirmBtn.onClick.AddListener(OnConfirmSuccess);
 
         // [추가] 사진 선택 버튼 클릭 시 테스트 함수 실행
+        // [시연 방어] 환경에 따라 다른 사진 선택 로직 연결
         if (photoSelectButton != null)
         {
-            photoSelectButton.onClick.AddListener(OnClickTestPhotoSelect);
+            photoSelectButton.onClick.AddListener(OnClickPhotoActionButton);
         }
 
         // 씬 시작 시에는 비활성 상태
         gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// [핵심] 시연 환경(에디터 vs 모바일)에 따라 사진 선택 방식을 결정합니다.
+    /// </summary>
+    private void OnClickPhotoActionButton()
+    {
+#if UNITY_EDITOR
+        // 1. 유니티 에디터 시연: 인스펙터에 넣은 테스트 이미지를 즉시 사용
+        Debug.Log("<color=orange>[Demo] 에디터 모드: 테스트 이미지를 로드합니다.</color>");
+        if (testTexture != null) OnPhotoCaptured(testTexture);
+        else Debug.LogError("인스펙터의 Test Texture가 비어있습니다!");
+#else
+        // 2. 실제 모바일 기기: 카메라 실행 (NativeCamera 플러그인 필요)
+        TakePhoto();
+#endif
+    }
+    private void TakePhoto()
+    {
+        // NativeCamera를 이용한 실제 촬영 로직
+        NativeCamera.TakePicture((path) =>
+        {
+            if (path != null)
+            {
+                Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024);
+                if (tex != null) OnPhotoCaptured(tex);
+            }
+        }, 1024);
     }
 
     /// <summary>
@@ -82,6 +112,7 @@ public class CookingVerifyPopup : MonoBehaviour
             attackButton.interactable = false; // 사진 찍기 전에는 공격 버튼 비활성
             attackBtnText.text = "공격하기";
             photoPreview.sprite = null;       // 이전 사진 클리어
+            capturedTexture = null;
         }
     }
 
@@ -130,6 +161,9 @@ public class CookingVerifyPopup : MonoBehaviour
         // 3. 통신 시작
         using (UnityWebRequest request = UnityWebRequest.Post(url, formData))
         {
+            // [중요] AI 서버 지연 대비 20초 타임아웃 설정
+            request.timeout = 20;
+
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.Success)
@@ -145,13 +179,29 @@ public class CookingVerifyPopup : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"[Verify] 통신 에러: {request.error}");
-                attackButton.interactable = true;
-                attackBtnText.text = "다시 시도";
+                HandleNetworkError(request);
             }
         }
     }
-    #endregion
+
+    private void HandleNetworkError(UnityWebRequest request)
+    {
+        SwitchState(false);
+        successStatusText.text = "ERROR";
+        successStatusText.color = Color.gray;
+
+        string errorMsg = "네트워크 오류가 발생했습니다.";
+        if (request.result == UnityWebRequest.Result.ConnectionError || request.error.Contains("timeout"))
+        {
+            errorMsg = "서버 응답 시간 초과!\n다시 시도해 주세요. (Timeout)";
+        }
+
+        aiFeedbackText.text = $"<color=red>{errorMsg}</color>\n{request.error}";
+        stepScoreText.text = "점수 측정 불가";
+
+        confirmBtn.gameObject.SetActive(false);
+        retryBtn.gameObject.SetActive(true);
+    }
 
     private int savedNextStep; // 서버에서 받은 다음 단계 번호 임시 저장
     private int savedScore;
@@ -176,7 +226,7 @@ public class CookingVerifyPopup : MonoBehaviour
         }
 
         // AI의 한마디 노출 (RichText 사용 가능)
-        aiFeedbackText.text = $"<color=#FFD700>\"AI의 판정 :\"</color>\n{data.feedback}";
+        aiFeedbackText.text = $"<color=#FFD700>\"AI의 피드백 :\"</color>\n{data.feedback}";
         stepScoreText.text = $"이번 단계 점수: <b>{data.score}</b>점";
 
         savedNextStep = data.next_step; // 다음 단계를 미리 저장해둠
@@ -200,25 +250,10 @@ public class CookingVerifyPopup : MonoBehaviour
         {
             battleCtrl.AddScore(savedScore);
             battleCtrl.HandleNextStep(savedNextStep);
-        }Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
+        }
+        Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
         Debug.Log("[Verify] 공격 성공! 다음 단계로 이동합니다.");
     }
-
-    /// <summary>
-    /// 테스트용 버튼에 연결할 함수. 사진을 찍은 것처럼 꾸며줌.
-    /// </summary>
-    public void OnClickTestPhotoSelect()
-    {
-        if (testTexture != null)
-        {
-            // 실제 사진이 들어온 것처럼 처리
-            OnPhotoCaptured(testTexture);
-            Debug.Log("[Test] 가짜 사진이 선택되었습니다. 이제 '공격하기'를 누르세요.");
-        }
-        else
-        {
-            Debug.LogError("[Test] 인스펙터에서 testTexture에 이미지를 할당해줘!");
-        }
-    }
+    #endregion
 }
 

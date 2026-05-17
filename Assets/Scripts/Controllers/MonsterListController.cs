@@ -213,8 +213,8 @@ public class MonsterListController : MonoBehaviour
         var net = NetworkManager.Instance;
         if (nicknameText != null) nicknameText.text = net.Nickname;
         if (goldText != null) goldText.text = net.TotalGold.ToString("N0"); // 숫자에 쉼표 추가
-        if (levelText != null) levelText.text = $"LV. {net.UserLevel}";
-        if (expText != null) expText.text = $"EXP: {net.CurrentExp}";
+        if (levelText != null) levelText.text = $"{net.UserLevel}";
+        if (expText != null) expText.text = $"{net.CurrentExp}";
     }
 
     public void OnBackButtonClicked()
