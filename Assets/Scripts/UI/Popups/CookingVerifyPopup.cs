@@ -49,6 +49,7 @@ public class CookingVerifyPopup : MonoBehaviour
 
     private void Start()
     {
+        LogToScreen("시작");
         // 메인 업로드 버튼 누르면 선택 팝업 띄움
         uploadMainButton.onClick.AddListener(() => uploadSelectionGroup.SetActive(true));
         closeSelectionBtn.onClick.AddListener(() => uploadSelectionGroup.SetActive(false));
@@ -72,6 +73,12 @@ public class CookingVerifyPopup : MonoBehaviour
     /// </summary>
     private void OnCameraClick()
     {
+        // 👇 [추가] 에디터 테스트 시에도 카메라 버튼 누르면 선택창이 바로 닫히도록 설정
+        if (uploadSelectionGroup != null) 
+        {
+            uploadSelectionGroup.SetActive(false);
+        }
+
 #if UNITY_EDITOR
         // 1. 유니티 에디터 시연: 인스펙터에 넣은 테스트 이미지를 즉시 사용
         Debug.Log("<color=orange>[Demo] 에디터 모드: 테스트 이미지를 로드합니다.</color>");
@@ -132,6 +139,12 @@ public class CookingVerifyPopup : MonoBehaviour
         }
         attackButton.interactable = true;
         LogToScreen($"이미지 로드 완료: {tex.width}x{tex.height}");
+
+        // 👇 [추가] 사진 가져오기 성공했으니 선택 창을 닫아서 이전 팝업이 보이게 합니다!
+        if (uploadSelectionGroup != null) 
+        {
+            uploadSelectionGroup.SetActive(false);
+        }
     }
 
     /// <summary>
