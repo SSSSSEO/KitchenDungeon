@@ -102,27 +102,44 @@ public class CookingVerifyPopup : MonoBehaviour
 
     private void TakePhoto()
     {
+        LogToScreen("카메라 실행 시도...");
         NativeCamera.TakePicture((path) =>
         {
+            LogToScreen($"카메라 콜백 응답 - 경로: {path}");
             if (path != null)
             {
+                // 텍스처 로드 시도
                 Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024);
-                if (tex != null) OnPhotoCaptured(tex);
+                if (tex != null)
+                {
+                    LogToScreen($"카메라 사진 로드 성공: {tex.width}x{tex.height}");
+                    OnPhotoCaptured(tex);
+                }
+                else LogToScreen("에러: 카메라 텍스처 로드 실패 (null)");
             }
+            else LogToScreen("취소: 사진 촬영 안 함");
         }, 1024);
     }
 
-    // 갤러리용
     private void PickGalleryImage()
     {
+        LogToScreen("갤러리 실행 시도...");
         NativeGallery.GetImageFromGallery((path) =>
         {
+            LogToScreen($"갤러리 콜백 응답 - 경로: {path}");
             if (path != null)
             {
+                // NativeGallery용 로드 함수 사용 (NativeCamera와 혼용해도 되지만 안전하게)
                 Texture2D tex = NativeGallery.LoadImageAtPath(path, 1024);
-                if (tex != null) OnPhotoCaptured(tex);
+                if (tex != null)
+                {
+                    LogToScreen($"갤러리 사진 로드 성공: {tex.width}x{tex.height}");
+                    OnPhotoCaptured(tex);
+                }
+                else LogToScreen("에러: 갤러리 텍스처 로드 실패 (null)");
             }
-        }, "Select Image", "image/*");
+            else LogToScreen("취소: 이미지 선택 안 함");
+        }, "사진 선택", "image/*");
     }
 
     public void OnPhotoCaptured(Texture2D tex)
@@ -136,9 +153,20 @@ public class CookingVerifyPopup : MonoBehaviour
             photoPreview.color = Color.white;
             photoPreview.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
             photoPreview.preserveAspect = true;
+        
+        // 레이아웃 강제 갱신 (이미지가 안 나타날 때 특효약)
+        Canvas.ForceUpdateCanvases();
+
+        LogToScreen("UI 프리뷰 할당 완료"); 
         }
+        else
+        {
+            LogToScreen("에러: photoPreview(Image) 컴포넌트 연결 안 됨");
+        }
+
         attackButton.interactable = true;
         LogToScreen($"이미지 로드 완료: {tex.width}x{tex.height}");
+
 
         // 👇 [추가] 사진 가져오기 성공했으니 선택 창을 닫아서 이전 팝업이 보이게 합니다!
         if (uploadSelectionGroup != null) 
