@@ -109,7 +109,7 @@ public class CookingVerifyPopup : MonoBehaviour
             if (path != null)
             {
                 // 텍스처 로드 시도
-                Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024);
+                Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024, markTextureNonReadable: false);
                 if (tex != null)
                 {
                     LogToScreen($"카메라 사진 로드 성공: {tex.width}x{tex.height}");
@@ -130,7 +130,7 @@ public class CookingVerifyPopup : MonoBehaviour
             if (path != null)
             {
                 // NativeGallery용 로드 함수 사용 (NativeCamera와 혼용해도 되지만 안전하게)
-                Texture2D tex = NativeGallery.LoadImageAtPath(path, 1024);
+                Texture2D tex = NativeGallery.LoadImageAtPath(path, 1024, markTextureNonReadable: false);
                 if (tex != null)
                 {
                     LogToScreen($"갤러리 사진 로드 성공: {tex.width}x{tex.height}");

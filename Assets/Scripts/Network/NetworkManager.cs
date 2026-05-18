@@ -12,7 +12,7 @@ public class NetworkManager : MonoBehaviour
 
     [Header("--- 서버 연결 설정 ---")]
     [Tooltip("서버 API의 기본 URL. 로컬 테스트 및 실서버 주소 전환 시 여기만 수정")]
-    public string BaseUrl = "http://192.168.219.113:5000/api/v1";
+    public string BaseUrl = "http://10.11.221.139:5000/api/v1";
 
     [Header("--- 유저 세션 정보 (로그인 시 채워짐) ---")]
     public int UserId = -1;
