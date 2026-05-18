@@ -17,9 +17,15 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private GameObject inputGroup;
     [Tooltip("AI의 판정 결과(피드백/점수)를 보여주는 결과 화면 그룹")]
     [SerializeField] private GameObject resultGroup;
+    [Tooltip("촬영/갤러리 선택 창")]
+    [SerializeField] private GameObject uploadSelectionGroup; 
 
     [Header("--- 입력 모드 (Input Mode) UI ---")]
-    [SerializeField] private Button photoSelectButton; // [추가] 사진을 찍거나 불러오는 액션 버튼
+    [SerializeField] private Button uploadMainButton;    // 메인 업로드 버튼
+    [SerializeField] private Button selectCameraButton;  // 선택창 내 촬영 버튼
+    [SerializeField] private Button selectGalleryButton; // 선택창 내 갤러리 버튼
+    [SerializeField] private Button closeSelectionBtn;   // 선택창 닫기 버튼
+
     [SerializeField] private TextMeshProUGUI guideTitleText; // 가이드 제목
     [SerializeField] private Image photoPreview;            // 찍은 사진 미리보기 칸
     [SerializeField] private Button attackButton;           // 최종 [공격하기] 버튼
@@ -34,7 +40,6 @@ public class CookingVerifyPopup : MonoBehaviour
 
     [Header("--- 데이터 및 시연용 설정 ---")]
     [SerializeField] private Texture2D testTexture; // 에디터 시연용 더미 이미지
-
     [SerializeField] private TextMeshProUGUI debugScreenText; // 핸드폰 디버그 용
 
     // 내부 통신용 데이터
@@ -44,26 +49,28 @@ public class CookingVerifyPopup : MonoBehaviour
 
     private void Start()
     {
+        // 메인 업로드 버튼 누르면 선택 팝업 띄움
+        uploadMainButton.onClick.AddListener(() => uploadSelectionGroup.SetActive(true));
+        closeSelectionBtn.onClick.AddListener(() => uploadSelectionGroup.SetActive(false));
+        
+        // 선택창 내 버튼들
+        selectCameraButton.onClick.AddListener(OnCameraClick);
+        selectGalleryButton.onClick.AddListener(OnGalleryClick);
+
         // 버튼 이벤트 바인딩
         attackButton.onClick.AddListener(OnVerifyRequest);
         retryBtn.onClick.AddListener(() => SwitchState(true)); // 재시도 시 다시 입력 모드로
         confirmBtn.onClick.AddListener(OnConfirmSuccess);
 
-        // [추가] 사진 선택 버튼 클릭 시 테스트 함수 실행
-        // [시연 방어] 환경에 따라 다른 사진 선택 로직 연결
-        if (photoSelectButton != null)
-        {
-            photoSelectButton.onClick.AddListener(OnClickPhotoActionButton);
-        }
-
         // 씬 시작 시에는 비활성 상태
+        uploadSelectionGroup.SetActive(false);
         gameObject.SetActive(false);
     }
 
     /// <summary>
     /// [핵심] 시연 환경(에디터 vs 모바일)에 따라 사진 선택 방식을 결정합니다.
     /// </summary>
-    private void OnClickPhotoActionButton()
+    private void OnCameraClick()
     {
 #if UNITY_EDITOR
         // 1. 유니티 에디터 시연: 인스펙터에 넣은 테스트 이미지를 즉시 사용
@@ -75,43 +82,56 @@ public class CookingVerifyPopup : MonoBehaviour
         TakePhoto();
 #endif
     }
+
+    private void OnGalleryClick()
+    {
+        uploadSelectionGroup.SetActive(false);
+#if UNITY_EDITOR
+        if (testTexture != null) OnPhotoCaptured(testTexture);
+#else
+        PickGalleryImage();
+#endif
+    }
+
     private void TakePhoto()
     {
-        // NativeCamera를 이용한 실제 촬영 로직
-        LogToScreen("카메라 실행...");
-
         NativeCamera.TakePicture((path) =>
         {
-            if (path == null)
+            if (path != null)
             {
-                LogToScreen("결과: 촬영 취소됨");
-                return;
+                Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024);
+                if (tex != null) OnPhotoCaptured(tex);
             }
+        }, 1024);
+    }
 
-            LogToScreen($"파일 경로 확인: {path}");
-
-            // 1. 파일이 실제로 존재하는지 체크
-            if (!System.IO.File.Exists(path))
+    // 갤러리용
+    private void PickGalleryImage()
+    {
+        NativeGallery.GetImageFromGallery((path) =>
+        {
+            if (path != null)
             {
-                LogToScreen("에러: 해당 경로에 파일이 존재하지 않음!");
-                return;
+                Texture2D tex = NativeGallery.LoadImageAtPath(path, 1024);
+                if (tex != null) OnPhotoCaptured(tex);
             }
+        }, "Select Image", "image/*");
+    }
 
-            // 2. 이미지 로드 시도
-            // 1024는 최대 해상도 제한이야. 너무 크면 메모리 부족으로 터질 수 있어.
-            Texture2D tex = NativeCamera.LoadImageAtPath(path, 1024, false);
+    public void OnPhotoCaptured(Texture2D tex)
+    {
+        capturedTexture = tex;
+        capturedTexture.Apply();
 
-            if (tex == null)
-            {
-                LogToScreen("에러: LoadImageAtPath가 null을 반환함");
-            }
-            else
-            {
-                LogToScreen($"성공: 텍스처 로드 완료 ({tex.width}x{tex.height})");
-                OnPhotoCaptured(tex);
-            }
-
-        }, 1024); // 여기서도 최대 해상도를 1024로 제한해서 안전하게 가져오자
+        if (photoPreview != null)
+        {
+            photoPreview.gameObject.SetActive(true);
+            photoPreview.color = Color.white;
+            photoPreview.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+            photoPreview.preserveAspect = true;
+        }
+        attackButton.interactable = true;
+        LogToScreen($"이미지 로드 완료: {tex.width}x{tex.height}");
     }
 
     /// <summary>
@@ -122,8 +142,6 @@ public class CookingVerifyPopup : MonoBehaviour
         recipeId = rId;
         stepOrder = sOrder;
         guideTitleText.text = $"<b>미션:</b> {detail.description}";
-        LogToScreen("가나다라마바사아자차카타파하");
-
         SwitchState(true); // 입력 모드로 초기화
         gameObject.SetActive(true);
     }
@@ -135,6 +153,7 @@ public class CookingVerifyPopup : MonoBehaviour
     {
         inputGroup.SetActive(isInput);
         resultGroup.SetActive(!isInput);
+        uploadSelectionGroup.SetActive(false);
 
         if (isInput)
         {
@@ -146,6 +165,7 @@ public class CookingVerifyPopup : MonoBehaviour
     }
 
     #region [사진 촬영 및 업로드]
+    /*
     /// <summary>
     /// (가상) 사진 촬영 혹은 갤러리 선택 완료 시 호출될 함수
     /// 실제 구현 시 NativeGallery 등의 플러그인 콜백에서 실행됩니다.
@@ -173,7 +193,7 @@ public class CookingVerifyPopup : MonoBehaviour
 
         // 버튼 활성화
         attackButton.interactable = true;
-    }
+    } */
 
     /// <summary>
     /// [공격하기] 버튼 클릭 시 서버로 사진과 데이터를 쏩니다.
