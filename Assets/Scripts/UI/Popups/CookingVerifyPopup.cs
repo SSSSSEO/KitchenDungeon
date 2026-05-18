@@ -145,7 +145,6 @@ public class CookingVerifyPopup : MonoBehaviour
     public void OnPhotoCaptured(Texture2D tex)
     {
         capturedTexture = tex;
-        capturedTexture.Apply();
 
         if (photoPreview != null)
         {
