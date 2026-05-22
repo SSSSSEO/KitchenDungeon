@@ -47,6 +47,9 @@ public class LoginController : MonoBehaviour
     /// </summary>
     private void OnLoginButtonClicked()
     {
+        string testUrl = $"{NetworkManager.Instance.BaseUrl}/cooking/verify";
+        Debug.Log($"<color=yellow>보내는 주소: {testUrl}</color>");
+
         // 입력창의 양 끝 공백을 제거한 뒤 텍스트를 가져옴
         string id = usernameInput.text.Trim();
         string pw = passwordInput.text.Trim();
