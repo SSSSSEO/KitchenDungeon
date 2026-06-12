@@ -121,7 +121,7 @@ namespace KitchenDungeon.UI.Popups
             if (rewardGoldText != null) rewardGoldText.text = $"{data.reward_gold:N0} G";
             if (rewardExpText != null) rewardExpText.text = $"{data.reward_exp:N0} EXP";
             if (ingredientsText != null) ingredientsText.text = $"<b>주요 재료:</b> {data.ingredients}";
-            if (quickTipText != null) quickTipText.text = $"TIP: {data.quick_tip}";
+            if (quickTipText != null) quickTipText.text = $"Tip: {data.quick_tip}";
 
             // 2. 완성 사진 URL 주소가 존재한다면 다운로드 코루틴 시동
             if (!string.IsNullOrEmpty(data.final_image_url))
