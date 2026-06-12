@@ -117,11 +117,11 @@ namespace KitchenDungeon.UI.Popups
         {
             // 1. 마스터 정보 및 텍스트 데이터 세팅
             if (messageText != null) messageText.text = $"<b>[{data.recipe_name}]</b>";
-            if (difficultyText != null) difficultyText.text = $"난이도: {new string('★', data.difficulty)}";
+            if (difficultyText != null) difficultyText.text = new string('★', data.difficulty);
             if (rewardGoldText != null) rewardGoldText.text = $"{data.reward_gold:N0} G";
-            if (rewardExpText != null) rewardExpText.text = $"+ {data.reward_exp:N0} EXP";
+            if (rewardExpText != null) rewardExpText.text = $"{data.reward_exp:N0} EXP";
             if (ingredientsText != null) ingredientsText.text = $"<b>주요 재료:</b> {data.ingredients}";
-            if (quickTipText != null) quickTipText.text = $"💡 {data.quick_tip}";
+            if (quickTipText != null) quickTipText.text = $"TIP: {data.quick_tip}";
 
             // 2. 완성 사진 URL 주소가 존재한다면 다운로드 코루틴 시동
             if (!string.IsNullOrEmpty(data.final_image_url))
