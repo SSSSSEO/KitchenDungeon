@@ -310,7 +310,7 @@ public class CookingBattleController : MonoBehaviour
     /// <summary>
     /// 모든 정화가 끝나고 로비 씬으로 돌아감.
     /// </summary>
-    private void ReturnToLobby()
+    public void ReturnToLobby()
     {
         // NetworkManager에 저장된 세션 데이터를 비워줌 (전투 종료)
         NetworkManager.Instance.CurrentSessionData = null;
