@@ -27,6 +27,9 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private Button closeSelectionBtn;   // 선택창 닫기 버튼
 
     [SerializeField] private TextMeshProUGUI guideTitleText; // 가이드 제목
+    // 👇 [Sprint 2 추가] 사진 촬영 시 유저에게 명확한 기준을 안내하는 텍스트 컴포넌트
+    [Tooltip("서버의 ai_criteria_guide 컬럼 데이터를 표시할 텍스트 컴포넌트")]
+    [SerializeField] private TextMeshProUGUI aiCriteriaGuideText;
     [SerializeField] private Image photoPreview;            // 찍은 사진 미리보기 칸
     [SerializeField] private Button attackButton;           // 최종 [공격하기] 버튼
     [SerializeField] private TextMeshProUGUI attackBtnText;  // 버튼 텍스트 (판정 중 시 텍스트 변경용)
@@ -182,6 +185,21 @@ public class CookingVerifyPopup : MonoBehaviour
         recipeId = rId;
         stepOrder = sOrder;
         guideTitleText.text = $"<b>미션:</b> {detail.description}";
+        
+        // 👇 [Sprint 2 추가] 서버에서 받아온 새로운 촬영 가이드 안내 텍스트 세팅
+        if (aiCriteriaGuideText != null)
+        {
+            // 데이터가 비어있을 경우를 대비한 방어 코드 포함
+            if (!string.IsNullOrEmpty(detail.ai_criteria_guide))
+            {
+                aiCriteriaGuideText.text = $"📸 <color=#FFD700>촬영 가이드:</color> {detail.ai_criteria_guide}";
+            }
+            else
+            {
+                aiCriteriaGuideText.text = "📸 사진을 촬영하여 검증을 진행하세요.";
+            }
+        }
+        
         SwitchState(true); // 입력 모드로 초기화
         gameObject.SetActive(true);
     }
