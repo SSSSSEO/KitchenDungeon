@@ -53,15 +53,16 @@ public class MonsterListController : MonoBehaviour
 
     [Header("--- 팝업 연결 ---")]
     [SerializeField] private MonsterInfoPopup infoPopup; // 새로 만든 팝업 연결
-    // 👇 [스프린트 2 추가] 가벼운 레벨업 팝업용 컴포넌트
-    [SerializeField] private TextMeshProUGUI levelUpTitleText; // "🎉 레벨업을 축하합니다! 🎉" 담당
-    [SerializeField] private TextMeshProUGUI levelUpValueText; // "Lv.1 ➡️ Lv.2" 담당
-    [SerializeField] private Button levelUpCloseButton;       // 팝업 닫아줄 확인 버튼
+   
 
     // 👇 [스프린트 2 추가] 레벨업 연출용 팝업 (아직 제작 전이므로 하이어라키의 비활성 GameObject를 연결할 예정)
     [Header("--- 스프린트 2 신규 팝업 ---")]
     [Tooltip("전투 종료 후 레벨업 발생 시 로비에서 활성화할 축하 팝업 오브젝트")]
     [SerializeField] private GameObject levelUpPopup;
+     // 👇 [스프린트 2 추가] 가벼운 레벨업 팝업용 컴포넌트
+    [SerializeField] private TextMeshProUGUI levelUpTitleText; // "🎉 레벨업을 축하합니다! 🎉" 담당
+    [SerializeField] private TextMeshProUGUI levelUpValueText; // "Lv.1 ➡️ Lv.2" 담당
+    [SerializeField] private Button levelUpCloseButton;       // 팝업 닫아줄 확인 버튼
 
     // 서버에서 받아온 몬스터 원본 데이터를 보관하는 리스트
     private List<MonsterData> monsterList = new List<MonsterData>();
@@ -259,13 +260,13 @@ public class MonsterListController : MonoBehaviour
                 // 1. 타이틀 텍스트 세팅
                 if (levelUpTitleText != null)
                 {
-                    levelUpTitleText.text = "🎉 <b>레벨업을 축하합니다!</b> 🎉";
+                    levelUpTitleText.text = "Level UP!";
                 }
 
                 // 2. 레벨 변동 값 텍스트 세팅 (사이즈나 볼드 처리를 인스펙터나 여기서 자유롭게 조절)
                 if (levelUpValueText != null)
                 {
-                    levelUpValueText.text = $"Lv.{prevLevel} ➡️ Lv.{currentLevel}";
+                    levelUpValueText.text = $"Lv.{prevLevel} > Lv.{currentLevel}";
                 }
 
                 Debug.Log("<color=cyan>🎉 [Lobby] 유저 레벨업을 감지하여 축하 팝업 연출을 가동합니다!</color>");

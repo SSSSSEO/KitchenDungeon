@@ -191,6 +191,12 @@ public class CookingVerifyPopup : MonoBehaviour
         recipeId = rId;
         stepOrder = sOrder;
         guideTitleText.text = $"<b>미션:</b> {detail.description}";
+
+        // 👇 1. 팝업이 켜질 때, 안에 있던 자식들(버튼, 배경)을 다 켜서 정상 상태로 만듭니다.
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(true);
+        }
         
         // 👇 [Sprint 2 추가] 서버에서 받아온 새로운 촬영 가이드 안내 텍스트 세팅
         if (aiCriteriaGuideText != null)
