@@ -26,7 +26,7 @@
             public string ai_guide;         // AI 채점 기준 프롬프트
 
             // 👇 [Sprint 2 추가] 유저 화면 표시용 사진 촬영 기준 안내 가이드
-            public string ai_criteria_guide;
+            public string ai_criteria_hint;
     }
 
         /// <summary>
