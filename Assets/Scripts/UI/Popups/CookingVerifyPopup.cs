@@ -195,7 +195,7 @@ public class CookingVerifyPopup : MonoBehaviour
             // 데이터가 비어있을 경우를 대비한 방어 코드 포함
             if (!string.IsNullOrEmpty(detail.ai_criteria_hint))
             {
-                aiCriteriaGuideText.text = $"<color=#FFD700>촬영 가이드:</color> {detail.ai_criteria_hint}";
+                aiCriteriaGuideText.text = $"<color=#202020>촬영 Tip:</color> {detail.ai_criteria_hint}";
             }
             else
             {
@@ -353,7 +353,7 @@ public class CookingVerifyPopup : MonoBehaviour
         }
 
         // AI의 한마디 노출 (RichText 사용 가능)
-        aiFeedbackText.text = $"<color=#FFD700>\"AI의 피드백 :\"</color>\n{data.feedback}";
+        aiFeedbackText.text = $"{data.feedback}";
         stepScoreText.text = $"이번 단계 점수: <b>{data.score}</b>점";
 
         // 👇 [스프린트 2 추가] AI 확신도 UI 연출 세팅
