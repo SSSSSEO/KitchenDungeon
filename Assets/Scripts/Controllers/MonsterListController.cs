@@ -53,6 +53,10 @@ public class MonsterListController : MonoBehaviour
 
     [Header("--- 팝업 연결 ---")]
     [SerializeField] private MonsterInfoPopup infoPopup; // 새로 만든 팝업 연결
+    // 👇 [스프린트 2 추가] 가벼운 레벨업 팝업용 컴포넌트
+    [SerializeField] private TextMeshProUGUI levelUpTitleText; // "🎉 레벨업을 축하합니다! 🎉" 담당
+    [SerializeField] private TextMeshProUGUI levelUpValueText; // "Lv.1 ➡️ Lv.2" 담당
+    [SerializeField] private Button levelUpCloseButton;       // 팝업 닫아줄 확인 버튼
 
     // 👇 [스프린트 2 추가] 레벨업 연출용 팝업 (아직 제작 전이므로 하이어라키의 비활성 GameObject를 연결할 예정)
     [Header("--- 스프린트 2 신규 팝업 ---")]
@@ -84,6 +88,10 @@ public class MonsterListController : MonoBehaviour
 
         // 👇 [스프린트 2 추가] 유저 스탯이 갱신된 직후, 전투 씬에서 넘어온 레벨업 예약이 있는지 체크!
         CheckAndTriggerLevelUp();
+
+        // [스프린트 2] 레벨업 확인 버튼 누르면 팝업 끄기
+        if (levelUpCloseButton != null)
+            levelUpCloseButton.onClick.AddListener(() => levelUpPopup.SetActive(false));
     }
 
     /// <summary>
@@ -236,20 +244,29 @@ public class MonsterListController : MonoBehaviour
     /// </summary>
     private void CheckAndTriggerLevelUp()
     {
-        // 우체통에 레벨업 편지가 와 있다면?
         if (NetworkManager.Instance.IsLevelUpPending)
         {
-            // 1. 다음 로비 진입 때 또 뜨면 안 되므로 플래그부터 즉시 꺼버림 (중복 차단 안전장치)
             NetworkManager.Instance.IsLevelUpPending = false;
 
-            // 2. 연결된 레벨업 팝업 오브젝트 강제 활성화!
             if (levelUpPopup != null)
             {
                 levelUpPopup.SetActive(true);
 
-                // 💡 [팁] 나중에 레벨업 팝업 전역 스크립트(LevelUpPopup.cs)를 따로 커스텀하게 만들면 
-                // 아래처럼 컴포넌트를 찾아 최신 레벨 정보를 파라미터로 넘겨주며 열어주면 완벽해!
-                // levelUpPopup.GetComponent<LevelUpPopup>().OpenLevelUpWindow(NetworkManager.Instance.UserLevel);
+                // 👇 [스프린트 2 수정] 분리된 텍스트 오브젝트에 각각 데이터 주입
+                int currentLevel = NetworkManager.Instance.UserLevel;
+                int prevLevel = Mathf.Max(1, currentLevel - 1);
+
+                // 1. 타이틀 텍스트 세팅
+                if (levelUpTitleText != null)
+                {
+                    levelUpTitleText.text = "🎉 <b>레벨업을 축하합니다!</b> 🎉";
+                }
+
+                // 2. 레벨 변동 값 텍스트 세팅 (사이즈나 볼드 처리를 인스펙터나 여기서 자유롭게 조절)
+                if (levelUpValueText != null)
+                {
+                    levelUpValueText.text = $"Lv.{prevLevel} ➡️ Lv.{currentLevel}";
+                }
 
                 Debug.Log("<color=cyan>🎉 [Lobby] 유저 레벨업을 감지하여 축하 팝업 연출을 가동합니다!</color>");
             }
