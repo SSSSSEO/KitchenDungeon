@@ -437,10 +437,11 @@ public class CookingBattleController : MonoBehaviour
 
                     Debug.Log($"<color=green>[정산 전역 동기화 완료]</color> 보유 골드: {NetworkManager.Instance.TotalGold}G, 레벨: {NetworkManager.Instance.UserLevel}");
 
-                    // 만약 레벨업 했다면 시연 때 티 내기용 로그 (나중에 팝업 띄워도 됨)
+                    // 👇 [스프린트 2 추가] 서버 응답이 레벨업(true)이면 NetworkManager 우체통에 플래그 예약!
                     if (res.data.is_level_up)
                     {
-                        Debug.LogWarning("🎉 LEVEL UP! 셰프님의 레벨이 상승했습니다!");
+                        NetworkManager.Instance.IsLevelUpPending = true;
+                        Debug.Log("<color=yellow>[전투 종료] 레벨업 플래그가 전역 세션에 예약되었습니다.</color>");
                     }
                 }
 

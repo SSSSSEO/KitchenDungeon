@@ -54,6 +54,11 @@ public class MonsterListController : MonoBehaviour
     [Header("--- 팝업 연결 ---")]
     [SerializeField] private MonsterInfoPopup infoPopup; // 새로 만든 팝업 연결
 
+    // 👇 [스프린트 2 추가] 레벨업 연출용 팝업 (아직 제작 전이므로 하이어라키의 비활성 GameObject를 연결할 예정)
+    [Header("--- 스프린트 2 신규 팝업 ---")]
+    [Tooltip("전투 종료 후 레벨업 발생 시 로비에서 활성화할 축하 팝업 오브젝트")]
+    [SerializeField] private GameObject levelUpPopup;
+
     // 서버에서 받아온 몬스터 원본 데이터를 보관하는 리스트
     private List<MonsterData> monsterList = new List<MonsterData>();
     // 현재 유저가 보고 있는 몬스터의 리스트 인덱스 (0부터 시작)
@@ -76,6 +81,9 @@ public class MonsterListController : MonoBehaviour
 
         // 3. 서버에 해당 스테이지의 몬스터 리스트 요청 시작
         StartCoroutine(RequestMonsterList());
+
+        // 👇 [스프린트 2 추가] 유저 스탯이 갱신된 직후, 전투 씬에서 넘어온 레벨업 예약이 있는지 체크!
+        CheckAndTriggerLevelUp();
     }
 
     /// <summary>
@@ -221,5 +229,34 @@ public class MonsterListController : MonoBehaviour
     {
         Debug.Log("로비 화면으로 돌아갑니다!");
         SceneManager.LoadScene("LobbyScene");
+    }
+
+    /// <summary>
+    /// [스프린트 2 추가] NetworkManager를 검사하여 레벨업 예약이 걸려있다면 축하 팝업을 화면에 노출합니다.
+    /// </summary>
+    private void CheckAndTriggerLevelUp()
+    {
+        // 우체통에 레벨업 편지가 와 있다면?
+        if (NetworkManager.Instance.IsLevelUpPending)
+        {
+            // 1. 다음 로비 진입 때 또 뜨면 안 되므로 플래그부터 즉시 꺼버림 (중복 차단 안전장치)
+            NetworkManager.Instance.IsLevelUpPending = false;
+
+            // 2. 연결된 레벨업 팝업 오브젝트 강제 활성화!
+            if (levelUpPopup != null)
+            {
+                levelUpPopup.SetActive(true);
+
+                // 💡 [팁] 나중에 레벨업 팝업 전역 스크립트(LevelUpPopup.cs)를 따로 커스텀하게 만들면 
+                // 아래처럼 컴포넌트를 찾아 최신 레벨 정보를 파라미터로 넘겨주며 열어주면 완벽해!
+                // levelUpPopup.GetComponent<LevelUpPopup>().OpenLevelUpWindow(NetworkManager.Instance.UserLevel);
+
+                Debug.Log("<color=cyan>🎉 [Lobby] 유저 레벨업을 감지하여 축하 팝업 연출을 가동합니다!</color>");
+            }
+            else
+            {
+                Debug.LogWarning("[Lobby] 레벨업 데이터는 넘어왔으나, 인펙터에 levelUpPopup 오브젝트가 연결되지 않았습니다!");
+            }
+        }
     }
 }

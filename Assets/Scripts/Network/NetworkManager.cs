@@ -28,6 +28,9 @@ public class NetworkManager : MonoBehaviour
     [Tooltip("팝업에서 시작 버튼을 눌렀을 때 서버에서 받은 첫 단계 정보를 저장. 인게임 씬에서 이를 참조함.")]
     public CookingStepData CurrentSessionData;
 
+    // 👇 [스프린트 2 추가] 로비에 도착했을 때 레벨업 팝업을 켜야 하는지 기억하는 전역 플래그
+    public bool IsLevelUpPending { get; set; } = false;
+
     private void Awake()
     {
         // 싱글톤 패턴: 단 하나의 인스턴스만 유지하고 씬이 바뀌어도 파괴되지 않게 설정
