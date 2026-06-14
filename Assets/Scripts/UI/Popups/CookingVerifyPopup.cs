@@ -49,6 +49,9 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private Texture2D testTexture; // 에디터 시연용 더미 이미지
     [SerializeField] private TextMeshProUGUI debugScreenText; // 핸드폰 디버그 용
 
+    [Header("--- 이펙트 연출 ---")]
+    [SerializeField] private Animator slashAnimator;
+
     // 내부 통신용 데이터
     private int recipeId;
     private int stepOrder;
@@ -377,20 +380,54 @@ public class CookingVerifyPopup : MonoBehaviour
     /// <summary>
     /// [성공 확인] 버튼 클릭 시. 팝업을 닫고 메인 전투 화면에 다음 단계를 요청함.
     /// </summary>
+    /// 
     private void OnConfirmSuccess()
     {
+        confirmBtn.interactable = false; // 연타 방지
+
+        // 1. 코드로 강력하게 애니메이션 방아쇠부터 당기기!
+        if (slashAnimator != null)
+        {
+
+            slashAnimator.transform.SetAsLastSibling();
+            
+            slashAnimator.SetTrigger("Attack");
+            Debug.Log("<color=cyan>[이펙트] 몬스터 베기 애니메이션 실행!</color>");
+        }
+        else
+        {
+            Debug.LogError("<color=red>[이펙트] 앗! 인스펙터에 Slash Animator가 연결되지 않았습니다!</color>");
+        }
+
+        // 2. 시간차 대기 시작
+        StartCoroutine(DelayNextStepRoutine());
+    }
+
+    private IEnumerator DelayNextStepRoutine()
+    {
+        // 👇 [핵심 해결법🔥] 팝업 스크립트는 살려두되, 
+        // 팝업 안의 모든 배경, 버튼, 글씨(자식 오브젝트들)를 0.1초 만에 싹 다 숨겨서 투명하게 만듭니다!
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(false);
+        }
+
+        // 팝업창이 사라진 깨끗한 화면에서 1초 동안 이펙트 감상!
+        yield return new WaitForSeconds(0.5f);
+
+        // 1초 뒤에 진짜 팝업 종료 및 다음 몬스터로 교체
         gameObject.SetActive(false);
 
-        // 메인 컨트롤러를 찾아 다음 단계 처리를 맡김
         CookingBattleController battleCtrl = Object.FindFirstObjectByType<CookingBattleController>();
         if (battleCtrl != null)
         {
             battleCtrl.AddScore(savedScore);
             battleCtrl.HandleNextStep(savedNextStep);
         }
-        Debug.Log($"[Verify Request] ID: {recipeId}, Step: {stepOrder}");
-        Debug.Log("[Verify] 공격 성공! 다음 단계로 이동합니다.");
+        
+        Debug.Log("[Verify] 다음 단계로 이동합니다.");
     }
+    
     #endregion
 
     // 로그 찍고 싶을 때마다 사용
