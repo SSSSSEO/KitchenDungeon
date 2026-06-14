@@ -52,6 +52,9 @@ public class CookingVerifyPopup : MonoBehaviour
     [Header("--- 이펙트 연출 ---")]
     [SerializeField] private Animator slashAnimator;
 
+    [Header("--- 팝업 기초 이미지 ---")]
+    [SerializeField] private Sprite defaultPreviewSprite;
+
     // 내부 통신용 데이터
     private int recipeId;
     private int stepOrder;
@@ -229,7 +232,9 @@ public class CookingVerifyPopup : MonoBehaviour
         {
             attackButton.interactable = false; // 사진 찍기 전에는 공격 버튼 비활성
             attackBtnText.text = "공격하기";
-            photoPreview.sprite = null;       // 이전 사진 클리어
+
+            photoPreview.sprite = defaultPreviewSprite;
+
             capturedTexture = null;
         }
     }

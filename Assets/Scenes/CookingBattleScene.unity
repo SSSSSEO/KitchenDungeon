@@ -2563,7 +2563,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &769109757
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2994,7 +2994,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &977264797
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3087,6 +3087,7 @@ MonoBehaviour:
   testTexture: {fileID: 2800000, guid: a63804f83274b63478636039b0f48685, type: 3}
   debugScreenText: {fileID: 2137611487}
   slashAnimator: {fileID: 982339092}
+  defaultPreviewSprite: {fileID: 21300000, guid: b39aa6f8aacb8414fba48fe23504c71f, type: 3}
 --- !u!114 &977264802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3748,7 +3749,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1210562356
 RectTransform:
   m_ObjectHideFlags: 0
