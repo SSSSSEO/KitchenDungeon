@@ -24,7 +24,6 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private Button uploadMainButton;    // 메인 업로드 버튼
     [SerializeField] private Button selectCameraButton;  // 선택창 내 촬영 버튼
     [SerializeField] private Button selectGalleryButton; // 선택창 내 갤러리 버튼
-    [SerializeField] private Button closeSelectionBtn;   // 선택창 닫기 버튼
 
     [SerializeField] private TextMeshProUGUI guideTitleText; // 가이드 제목
     // 👇 [Sprint 2 추가] 사진 촬영 시 유저에게 명확한 기준을 안내하는 텍스트 컴포넌트
@@ -38,6 +37,11 @@ public class CookingVerifyPopup : MonoBehaviour
     [SerializeField] private TextMeshProUGUI successStatusText; // [추가] 성공 여부 상태 텍스트
     [SerializeField] private TextMeshProUGUI aiFeedbackText; // AI의 한마디 (ai_feedback)
     [SerializeField] private TextMeshProUGUI stepScoreText;  // 이번 단계 점수
+    // 👇 [스프린트 2 추가] 확신도 시각화용 슬라이더 바 및 텍스트
+    [Tooltip("인스펙터에서 Slider의 Max Value를 100으로 설정해두면 코딩이 편해!")]
+    [SerializeField] private Slider aiConfidenceSlider;
+    [SerializeField] private TextMeshProUGUI aiConfidenceText;
+
     [SerializeField] private Button confirmBtn;             // 성공 시 [확인] 버튼
     [SerializeField] private Button retryBtn;               // 실패 시 [재시도] 버튼
 
@@ -55,7 +59,6 @@ public class CookingVerifyPopup : MonoBehaviour
         LogToScreen("시작");
         // 메인 업로드 버튼 누르면 선택 팝업 띄움
         uploadMainButton.onClick.AddListener(() => uploadSelectionGroup.SetActive(true));
-        closeSelectionBtn.onClick.AddListener(() => uploadSelectionGroup.SetActive(false));
         
         // 선택창 내 버튼들
         selectCameraButton.onClick.AddListener(OnCameraClick);
@@ -352,6 +355,16 @@ public class CookingVerifyPopup : MonoBehaviour
         // AI의 한마디 노출 (RichText 사용 가능)
         aiFeedbackText.text = $"<color=#FFD700>\"AI의 피드백 :\"</color>\n{data.feedback}";
         stepScoreText.text = $"이번 단계 점수: <b>{data.score}</b>점";
+
+        // 👇 [스프린트 2 추가] AI 확신도 UI 연출 세팅
+        if (aiConfidenceSlider != null)
+        {
+            aiConfidenceSlider.value = data.ai_confidence; // 게이지 채우기
+        }
+        if (aiConfidenceText != null)
+        {
+            aiConfidenceText.text = $"판정 확신도: <b>{data.ai_confidence}</b>%";
+        }
 
         savedNextStep = data.next_step; // 다음 단계를 미리 저장해둠
         savedScore = data.score;

@@ -69,5 +69,8 @@
             public int current_step;        // 방금 검증한 단계
             public int total_steps;         // 전체 단계 (HP바 동기화용)
             public int next_step;           // 성공 시 다음 단계 번호
+            
+            // 👇 [스프린트 2 추가] AI 판정 확신도 (0 ~ 100)
+            public int ai_confidence;
         }
     }
