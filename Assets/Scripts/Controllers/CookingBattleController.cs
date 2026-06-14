@@ -60,6 +60,9 @@ public class CookingBattleController : MonoBehaviour
     private int currentStepOrder;
     private int totalSteps;
     private int accumulatedScore = 0;
+    // 👇 [스프린트 2 추가] 서버에서 처음 넘겨준 고정 보상 데이터를 안전하게 백업할 공간
+    private int cachedRewardGold = 0;
+    private int cachedRewardExp = 0;    
 
     // 타이머 구동용 변수
     private float remainingTime;
@@ -99,6 +102,10 @@ public class CookingBattleController : MonoBehaviour
         recipeId = data.recipe_id;
         currentStepOrder = data.current_step;
         totalSteps = data.total_steps;
+
+        // 👇 [스프린트 2 추가] 보상 데이터가 들어왔을 때만 로컬 변수에 안전하게 백업 (0으로 덮어써지는 것 방지)
+        if (data.reward_gold > 0) cachedRewardGold = data.reward_gold;
+        if (data.reward_exp > 0) cachedRewardExp = data.reward_exp;
 
         // [핵심] 레시피 ID에 맞는 프리팹들을 로드하고 배치함
         SpawnMonsterPrefabs(recipeId);
@@ -285,16 +292,10 @@ public class CookingBattleController : MonoBehaviour
         if (currentGoodInstance != null) currentGoodInstance.SetActive(true);
 
 
-        // 서버 세션 데이터에서 고정 보상(Gold, Exp)을 가져와 UI에 세팅
-        if (NetworkManager.Instance.CurrentSessionData != null)
-        {
-            var data = NetworkManager.Instance.CurrentSessionData;
-
-            // 결과창 텍스트 업데이트
-            totalScoreText.text = $"최종 점수: {accumulatedScore:N0}";
-            rewardGoldText.text = $"+ {data.reward_gold:N0} GOLD";
-            rewardExpText.text = $"+ {data.reward_exp:N0} EXP";
-        }
+        // 👇 [스프린트 2 수정] 덮어써지지 않고 안전하게 살아남은 로컬 백업 변수로 결과창 세팅!
+        totalScoreText.text = $"최종 점수: {accumulatedScore:N0}";
+        rewardGoldText.text = $"+ {cachedRewardGold:N0} GOLD";
+        rewardExpText.text = $"+ {cachedRewardExp:N0} EXP";
 
         // 4. 결과 팝업 활성화
         if (victoryPopupGroup != null)
@@ -303,7 +304,7 @@ public class CookingBattleController : MonoBehaviour
             
             // 버튼 연결 (이전 리스너 제거 후 새로 등록)
             lobbyExitButton.onClick.RemoveAllListeners();
-            lobbyExitButton.onClick.AddListener(ReturnToLobby);
+            lobbyExitButton.onClick.AddListener(() => StartCoroutine(RequestClaimRewards()));
         }
     }
 
@@ -387,4 +388,71 @@ public class CookingBattleController : MonoBehaviour
             currentGoodInstance.SetActive(false); // 일단 숨겨둠
         }
     }
+
+    /// <summary>
+    /// [POST] /api/v1/rewards/claim API를 호출하여 서버 DB에 최종 재화를 적립하고 
+    /// NetworkManager 세션을 최신 스탯으로 동기화한 뒤 로비로 복귀합니다.
+    /// </summary>
+    private IEnumerator RequestClaimRewards()
+    {
+        // 중복 클릭 방지
+        lobbyExitButton.interactable = false;
+
+        string url = $"{NetworkManager.Instance.BaseUrl}/rewards/claim";
+
+        // 1. JSON 요청 데이터 구성 (유저 ID, 레시피 ID)
+        // JsonUtility 매핑용 임시 무명 객체 클래스 구조 사용
+        CookingStartRequest bodyData = new CookingStartRequest
+        {
+            user_id = NetworkManager.Instance.UserId,
+            recipe_id = recipeId
+        };
+        string json = JsonUtility.ToJson(bodyData);
+
+        // 2. WebRequest 설정
+        using (UnityWebRequest request = new UnityWebRequest(url, "POST"))
+        {
+            byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(json);
+            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            request.downloadHandler = new DownloadHandlerBuffer();
+            request.SetRequestHeader("Content-Type", "application/json");
+
+            yield return request.SendWebRequest();
+
+            // 3. 응답 처리
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string jsonResult = request.downloadHandler.text;
+                Debug.Log($"[Reward Claim] 정산 응답 성공: {jsonResult}");
+
+                // 람다나 매핑을 활용해 JSON을 C# 객체로 역직렬화
+                RewardResponse res = JsonUtility.FromJson<RewardResponse>(jsonResult);
+
+                if (res != null && res.status == "success")
+                {
+                    // 🌟 [핵심] 전역 세션(NetworkManager)에 서버가 준 최신 지갑/스탯 동기화!
+                    NetworkManager.Instance.TotalGold = res.data.total_gold;
+                    NetworkManager.Instance.UserLevel = res.data.user_level;
+                    NetworkManager.Instance.CurrentExp = res.data.current_exp;
+
+                    Debug.Log($"<color=green>[정산 전역 동기화 완료]</color> 보유 골드: {NetworkManager.Instance.TotalGold}G, 레벨: {NetworkManager.Instance.UserLevel}");
+
+                    // 만약 레벨업 했다면 시연 때 티 내기용 로그 (나중에 팝업 띄워도 됨)
+                    if (res.data.is_level_up)
+                    {
+                        Debug.LogWarning("🎉 LEVEL UP! 셰프님의 레벨이 상승했습니다!");
+                    }
+                }
+
+                // 4. 안전하게 정산이 끝났으니 기존 로비 귀환 함수 실행
+                ReturnToLobby();
+            }
+            else
+            {
+                Debug.LogError($"[Reward Claim] 정산 실패: {request.error}");
+                lobbyExitButton.interactable = true; // 실패 시 다시 누를 수 있게 구제
+            }
+        }
+    }
 }
+

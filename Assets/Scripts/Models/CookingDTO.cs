@@ -73,4 +73,26 @@
             // 👇 [스프린트 2 추가] AI 판정 확신도 (0 ~ 100)
             public int ai_confidence;
         }
-    }
+
+        /// <summary>
+        /// [POST] /api/v1/rewards/claim API의 최종 정산 응답 매핑 클래스
+        /// </summary>
+        [Serializable]
+        public class RewardResponse
+        {
+            public string status;
+            public string message;
+            public RewardResponseData data;
+        }
+    
+        [Serializable]
+        public class RewardResponseData
+        {
+            public int current_exp;   // 정산 후 최종 경험치
+            public int exp_added;     // 이번에 획득한 경험치
+            public int gold_added;    // 이번에 획득한 골드
+            public bool is_level_up;  // 레벨업 여부 플래그
+            public int total_gold;    // 정산 후 최종 보유 골드
+            public int user_level;    // 정산 후 최종 레벨
+        }
+}
