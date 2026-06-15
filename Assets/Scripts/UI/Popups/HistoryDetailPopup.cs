@@ -59,6 +59,15 @@ namespace KitchenDungeon.UI.Popups
             {
                 currentMonsterInstance = Instantiate(monsterPrefab, monsterAnchor);
                 currentMonsterInstance.SetActive(true); // 화면에 등장!
+
+                // 생성된 몬스터에게서 SpriteRenderer를 찾아서 서열(Sorting Order)을 강제로 뻥튀기합니다.
+                SpriteRenderer sr = currentMonsterInstance.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null)
+                    {
+                        sr.sortingOrder = 100; // 팝업창 UI보다 무조건 높게 (보통 Canvas는 0부터 시작합니다)
+                    }
+
+                currentMonsterInstance.transform.localScale *= 0.5f;
             }
             else
             {
@@ -73,14 +82,14 @@ namespace KitchenDungeon.UI.Popups
                 finalScoreText.text = $"<b>{data.final_score}</b> 점";
 
             if (rewardGoldText != null)
-                rewardGoldText.text = $"+ {data.earned_gold:N0}";
+                rewardGoldText.text = $"+{data.earned_gold:N0}G";
 
             if (rewardExpText != null)
-                rewardExpText.text = $"+ {data.earned_exp:N0}";
+                rewardExpText.text = $"+{data.earned_exp:N0}EXP";
 
             if (feedbackText != null)
             {
-                feedbackText.text = $"<color=#FFD700><b>[Gemini Judge의 종합 평가]</b></color>\n\"{data.final_ai_feedback}\"";
+                feedbackText.text = $"{data.final_ai_feedback}";
             }
 
             // 4. 유저가 찍은 실제 요리 이미지 실시간 웹 다운로드

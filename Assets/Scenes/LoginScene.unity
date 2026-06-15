@@ -1686,6 +1686,7 @@ MonoBehaviour:
       required_image_count: 0
       is_ai_required: 0
       ai_guide: 
+      ai_criteria_hint: 
 --- !u!4 &692483367
 Transform:
   m_ObjectHideFlags: 0
