@@ -117,7 +117,7 @@ namespace KitchenDungeon.Controllers
         private void OnBackToLobbyClicked()
         {
             Debug.Log("[History] 로비(MonsterScene)로 귀환합니다.");
-            SceneManager.LoadScene("MonsterScene"); // 몬스터 리스트 로비 씬 이름으로 변경 가능
+            SceneManager.LoadScene("LobbyScene"); // 몬스터 리스트 로비 씬 이름으로 변경 가능
         }
     }
 }

@@ -236,6 +236,12 @@ public class LobbyController : MonoBehaviour
         Debug.Log("로그인 화면으로 돌아갑니다!");
         SceneManager.LoadScene("LoginScene");
     }
+
+    public void OnHistoryButtonClicked()
+    {
+        Debug.Log("히스토리 화면으로 이동합니다!");
+        SceneManager.LoadScene("HistoryScene");
+    }
 }
 
     

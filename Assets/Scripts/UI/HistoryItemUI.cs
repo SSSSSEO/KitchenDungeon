@@ -48,7 +48,15 @@ namespace KitchenDungeon.UI.History
             {
                 clickButton.onClick.RemoveAllListeners();
                 clickButton.onClick.AddListener(() => onClicked?.Invoke(myData));
+
+                clickButton.onClick.AddListener(() =>
+                    {
+                        Debug.Log("카드 클릭됨");
+                        onClicked?.Invoke(myData);
+                    });
             }
         }
+
+
     }
 }
