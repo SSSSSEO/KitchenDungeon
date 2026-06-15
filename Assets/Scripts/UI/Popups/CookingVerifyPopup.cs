@@ -195,6 +195,8 @@ public class CookingVerifyPopup : MonoBehaviour
         stepOrder = sOrder;
         guideTitleText.text = $"<b>미션:</b> {detail.description}";
 
+        if (confirmBtn != null) confirmBtn.interactable = true;
+
         // 👇 1. 팝업이 켜질 때, 안에 있던 자식들(버튼, 배경)을 다 켜서 정상 상태로 만듭니다.
         foreach (Transform child in transform)
         {
